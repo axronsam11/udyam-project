@@ -72,7 +72,7 @@ export function SchemaForm() {
     if (!schema) return {};
     
     const defaults: any = {};
-    schema.steps.forEach(step => {
+    schema.steps.forEach((step: any) => {
       step.fields.forEach((field: any) => {
         if (field.defaultValue !== undefined) {
           defaults[field.name] = field.defaultValue;
@@ -86,7 +86,7 @@ export function SchemaForm() {
   const mergedDefaults = { ...getSchemaDefaults(), ...formData };
 
   const form = useForm({
-    resolver: currentStepSchema ? zodResolver(currentStepSchema) : undefined,
+    resolver: currentStepSchema ? zodResolver(currentStepSchema as any) : undefined,
     defaultValues: mergedDefaults,
     mode: "onChange"
   });

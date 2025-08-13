@@ -41,7 +41,7 @@ export function generateZodSchema(step: any): z.ZodSchema {
               return /^[0-9]{12}$/.test(cleaned);
             }, message);
           } else {
-            fieldSchema = fieldSchema.regex(pattern, message);
+            fieldSchema = (fieldSchema as any).regex(pattern, message);
           }
         }
         
@@ -50,26 +50,29 @@ export function generateZodSchema(step: any): z.ZodSchema {
         }
         
         if (field.minLength) {
-          fieldSchema = fieldSchema.min(field.minLength, `Minimum ${field.minLength} characters required`);
+          fieldSchema = (fieldSchema as any).min(field.minLength, `Minimum ${field.minLength} characters required`);
         }
         
-        if (field.maxLength) {
-          fieldSchema = fieldSchema.max(field.maxLength, `Maximum ${field.maxLength} characters allowed`);
+        if (field.min !== undefined) {
+          fieldSchema = (fieldSchema as any).min(field.min);
+        }
+        
+        if (field.max !== undefined) {
+          fieldSchema = (fieldSchema as any).max(field.max);
         }
         
         break;
 
       case "number":
-        fieldSchema = z.number().min(0, "Value must be positive");
+        fieldSchema = z.number();
         
         if (field.min !== undefined) {
-          fieldSchema = fieldSchema.min(field.min, `Minimum value is ${field.min}`);
+          fieldSchema = (fieldSchema as any).min(field.min);
         }
         
         if (field.max !== undefined) {
-          fieldSchema = fieldSchema.max(field.max, `Maximum value is ${field.max}`);
+          fieldSchema = (fieldSchema as any).max(field.max);
         }
-        
         break;
 
       case "boolean":
@@ -89,7 +92,7 @@ export function generateZodSchema(step: any): z.ZodSchema {
         // Past date validation for DOB
         if (field.name === "dateOfBirth") {
           fieldSchema = fieldSchema.refine((val) => {
-            const date = new Date(val);
+            const date = new Date(val as string);
             return date < new Date();
           }, "Date of birth must be in the past");
         }
